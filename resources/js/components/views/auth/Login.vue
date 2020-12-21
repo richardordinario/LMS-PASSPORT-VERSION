@@ -43,21 +43,35 @@ export default {
             form: {
                 email: '',
                 password: '',
-                provider: 'users'
+                provider: 'admins'
             },
             errors: []
         }
     },
     methods: {
         frmLogin() {
-            User.login(this.form).then(res => {
-                this.$store.commit('user/LOGIN', true)
-                localStorage.setItem('token', res.data.access_token)
-                this.$router.push('/home')
-                console.log(res.data)
-            }).catch(errors => {
-                 this.errors = errors.response.data.errors
+            return new Promise((resolve, reject) => {
+                User.login(this.form).then(res => {
+                    this.$store.commit('user/LOGIN', true)
+                    this.$store.commit('user/AUTH_ROLE', this.form.provider.slice(0, -1))
+                    localStorage.setItem('token', res.data.access_token)
+                    this.$router.push('/admin/home')
+                    resolve(res)
+                    console.log(res.data)
+                }).catch(errors => {
+                    this.errors = errors.response.data.errors
+                    reject(errors)
+                })
             })
+            // User.login(this.form).then(res => {
+            //     this.$store.commit('user/LOGIN', true)
+            //     this.$store.commit('user/AUTH_ROLE', this.form.provider.slice(0, -1))
+            //     localStorage.setItem('token', res.data.access_token)
+            //     this.$router.push('/admin/home')
+            //     console.log(res.data)
+            // }).catch(errors => {
+            //      this.errors = errors.response.data.errors
+            // })
         }
     }
 }

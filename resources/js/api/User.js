@@ -12,5 +12,8 @@ export default {
     },
     auth() {
         return Api().get('/api/user')
+    },
+    provider() {
+        return Api().get('/api/provider')
     }
 }

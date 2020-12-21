@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use SMartins\PassportMultiauth\ProviderRepository;
 use App\Http\Requests\Auth\RegisterRequest;
+use SMartins\PassportMultiauth\Provider;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -27,4 +29,5 @@ class UserController extends Controller
         Auth::user()->token()->revoke();
         return response()->json('Successfully Logout!');
     }
+    
 }

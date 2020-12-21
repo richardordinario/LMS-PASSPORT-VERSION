@@ -10,6 +10,10 @@ window.Vue = require('vue');
 
 import router from './router'
 import store from './store'
+import { sync } from 'vuex-router-sync'
+import App from './App.vue'
+
+// sync(router, store)
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -31,7 +35,8 @@ Vue.component('main-app', require('./App.vue').default);
  */
 
 const app = new Vue({
-    el: '#app',
     store,
-    router
-});
+    router,
+    el: '#app',
+    render: h => h(App),
+}).$mount("#app");

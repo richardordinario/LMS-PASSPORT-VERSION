@@ -1,25 +1,54 @@
 <template>
-    <div id="MainApp">
-       <header class="flex bg-orange-500 mb-10">
-           <div class="container mx-auto">
-                <div class="flex item-center justify-between px-4 py-4">
-                    <div class="flex item-center">
-                        <span class="text-white">LMS</span>
-                    </div>
-                   <div class="flex item-center space-x-6">
-                        <router-link to="/login"><a href="#" class="text-white">Login</a></router-link>
-                        <router-link to="/register"><a href="#" class="text-white">Register</a></router-link>
-                    </div>
-                </div>
-           </div>
-       </header>
+    <div id="app">
+        <LoginHeader v-if="!isLoggedIn"/>
+        <StudentHeader v-if="isLoggedIn && authRole == 'user' "/>
         <router-view></router-view>
     </div>
 </template>
 
 <script>
+    import LoginHeader from './components/views/template/LoginHeader.vue'
+    import StudentHeader from './components/views/student/template/Header.vue'
+    import User from './api/User'
+    import Auth from './api/Provider'
+    import { mapGetters } from 'vuex'
+
     export default {
-        
+        components: {
+            LoginHeader,
+            StudentHeader
+        },
+        computed: {
+            ...mapGetters('user',[
+                'isLoggedIn',
+                'authRole'
+            ]),
+        },
+        methods: {
+            provider() {
+                if(localStorage.getItem('token')) {
+                    // Auth.provider().then(res => {
+                    //     if(res.data == 'admin') {
+                            
+                    //     }else if(res.data == 'teacher') {
+
+                    //     }else {
+                    //         this.$store.commit('user/AUTH_ROLE', res.data)
+                    //     }
+                    //     this.$store.commit('user/AUTH_ROLE', res.data)
+                    // }).catch(err => {
+                    //     console.log(err.response.data)
+                    // })
+                    User.provider().then(res=> {
+                        this.$store.commit('user/AUTH_ROLE', res.data)
+                    })
+                }
+            }
+        },
+        mounted() {
+            this.$store.commit('user/LOGIN', !!localStorage.getItem('token')),
+            this.provider()
+        }
     }
 </script>
 

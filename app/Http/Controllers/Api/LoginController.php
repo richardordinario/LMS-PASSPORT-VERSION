@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-
 use App\Models\Authenticator;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
+use Auth;
 
 class LoginController extends Controller
 {
@@ -33,12 +33,24 @@ class LoginController extends Controller
             throw new AuthenticationException();
         }
 
-        $token = $user->createToken('My Token')->accessToken;
+        $token = $user->createToken($request->provider)->accessToken;
 
         return [
             'token_type' => 'Bearer',
             'access_token' => $token,
             'user' => $user
         ];
+    }
+
+    public function provider()
+    {
+        if(Auth::guard('admin')->check()) {
+            $role = 'admin';
+        }else if(Auth::guard('teacher')->check()) {
+            $role = 'teacher';
+        }else {
+            $role = 'user';
+        }
+        return response()->json($role);
     }
 }

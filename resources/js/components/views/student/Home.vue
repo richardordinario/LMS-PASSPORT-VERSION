@@ -1,6 +1,11 @@
 <template>
     <div>
         Home
+        <h1>{{user.name}}</h1>
+        <h1></h1>
+        <router-link to="/subject">Subject</router-link>
+        <router-link to="/account">Account</router-link>
+        <router-view></router-view>
     </div>
 </template>
 
@@ -10,9 +15,9 @@
 
     export default {
         computed: {
-            ...mapState({
+            ...mapState('user',{
                 user: state => state.auth.user
-            })
+            }),
         },
         mounted() {
             User.auth().then(res => {
