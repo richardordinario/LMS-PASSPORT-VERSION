@@ -10,10 +10,12 @@ window.Vue = require('vue');
 
 import router from './router'
 import store from './store'
-import { sync } from 'vuex-router-sync'
 import App from './App.vue'
+import Gate from './Gate'
 
-// sync(router, store)
+Vue.prototype.$gate = new Gate(window.role);
+//Vue.prototype.$role = window.role
+// console.log(window.role)
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -28,6 +30,11 @@ import App from './App.vue'
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('main-app', require('./App.vue').default);
 
+// export const globalStore = new Vue({
+//     data: {
+//       role: 'youre role'
+//     }
+// })
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -38,5 +45,5 @@ const app = new Vue({
     store,
     router,
     el: '#app',
-    render: h => h(App),
-}).$mount("#app");
+    render: h => h(App)
+}).$mount(App);

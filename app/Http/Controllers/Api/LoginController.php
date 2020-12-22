@@ -15,6 +15,7 @@ class LoginController extends Controller
      */
     private $authenticator;
 
+
     public function __construct(Authenticator $authenticator)
     {
         $this->authenticator = $authenticator;
@@ -44,13 +45,29 @@ class LoginController extends Controller
 
     public function provider()
     {
-        if(Auth::guard('admin')->check()) {
+        if(Auth::guard('admin')->check() == true) {
             $role = 'admin';
-        }else if(Auth::guard('teacher')->check()) {
+        }else if(Auth::guard('teacher')->check() == true) {
             $role = 'teacher';
         }else {
             $role = 'user';
         }
-        return response()->json($role);
+        // $role = Auth::guard('api')->check();
+        return response()->json($role, 200);
+        //$role = Auth::guard('admin')->check();
+
+        // try {
+        //     Auth::guard('api')->user()->token()->revoke();
+        //     return response()->json('Succefully Logout');
+        // } catch (\Throwable $th) {
+        //     return response()->json('Error','Something went wrong',401);
+        // }
+        //dd(Auth::guard('admin')->user()->token()->revoke());
+
+    }
+
+    public function error()
+    {
+        return response()->json('Unauthorized!',401);
     }
 }

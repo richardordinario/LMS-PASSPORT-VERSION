@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 
 import Login from '../components/views/auth/Login.vue'
 import Register from '../components/views/auth/Register.vue'
+import Unauthorized from '../components/views/auth/Unauthorized.vue'
 
 //student component
 import Home from '../components/views/student/Home.vue'
@@ -33,24 +34,30 @@ const routes = [
         component: Register,
         meta: {guest: true}
     },
+    {
+        path: '/unauthorized',
+        name: 'unauthorized',
+        component: Unauthorized,
+        meta: {guest: true}
+    },
     //student route
     {
         path: '/home',
         name: 'home',
         component: Home,
-        meta: {usersAuth: true},
+        meta: {user: true},
         children:[
             {
                 path: '/subject',
                 name: 'subject',
                 component: Subject,
-                meta: {usersAuth: true},
+                meta: {user: true},
             },
             {
                 path: '/account',
                 name: 'account',
                 component: Account,
-                meta: {usersAuth: true},
+                meta: {user: true},
             },
         ]
     },
@@ -59,7 +66,7 @@ const routes = [
         path: '/admin/home',
         name: 'adminHome',
         component: AdminHome,
-        meta: {usersAuth: true},
+        meta: {admin: true},
     }
 ]
 
@@ -68,69 +75,61 @@ const router = new VueRouter({
     routes
 })
 
-import { provider } from '../api/Provider'
-import store from '../store'
-import Api from '../api/Api'
-
-
 function loggedIn() {
     return localStorage.getItem('token')
 }
 
-// function auth() {
-//     getAuth()
-//     return store.getters['user/authRole']
-// }
-// function getAuth() {
-//     return store.dispatch('user/getAuth')
-// }
-// console.log(provider())
+import authenticate from '../store/auth'
+import store from '../store'
 
 router.beforeEach((to, from, next) => {
-    console.log(store.state.user.auth.role)
-    if (to.matched.some(record => record.meta.usersAuth)) {
+    store.dispatch('user/checkAuth', authenticate.getters['authRole'])
+
+    function roleValidation(meta) {
         if (!loggedIn()) {
-            next({
-                path: '/login',
-                query: { redirect: to.fullPath }
-            })
+            if(meta == 'guest'){
+                next()
+            }else {
+                next({
+                    path: '/login',
+                    query: { redirect: to.fullPath }
+                })
+            }
         }else {
-            if(store.state.user.auth.role == 'user') {
+            if(meta == 'guest') {
+                if(authenticate.getters['authRole'] == 'user') {
+                    next({
+                        path: '/home',
+                        query: { redirect: to.fullPath }
+                    })
+                }else if(authenticate.getters['authRole'] == 'admin') {
+                    next({
+                        path: '/admin/home',
+                        query: { redirect: to.fullPath }
+                    })
+                }
+            }else if(authenticate.getters['authRole'] != meta){
                 next({
-                    path: '/home',
-                    query: { redirect: to.fullPath }
-                })
-            }else if(store.state.user.auth.role == 'admin') {
-                next({
-                    path: '/admin/home',
+                    path: '/login',
                     query: { redirect: to.fullPath }
                 })
             }else {
                 next()
             }
         }
+    }
+
+    if (to.matched.some(record => record.meta.user)) {
+        const meta = 'user'
+        roleValidation(meta)
+    }else if(to.matched.some(record => record.meta.admin)) {
+        const meta = 'admin'
+        roleValidation(meta)
     }else if(to.matched.some(record => record.meta.guest)) {
-        if (loggedIn()) {
-            if(store.state.user.auth.role == 'user') {
-                next({
-                    path: '/home',
-                    query: { redirect: to.fullPath }
-                })
-            }else if(store.state.user.auth.role == 'admin') {
-                next({
-                    path: '/admin/home',
-                    query: { redirect: to.fullPath }
-                })
-            }else {
-                next()
-            }
-           
-        }
-        else {
-            next()
-        }
+        const meta = 'guest'
+        roleValidation(meta)
     }else {
-        next() // make sure to always call next()!
+        next()
     }
 })
 

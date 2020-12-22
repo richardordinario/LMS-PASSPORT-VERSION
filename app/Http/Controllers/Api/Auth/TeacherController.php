@@ -24,7 +24,10 @@ class TeacherController extends Controller
 
     public function logout()
     {
-        Auth::guard('teacher')->user()->token()->revoke();
-        return response()->json('Successfully Logout!');
+        //return $request->user();
+        //$data = Auth::guard('api')->check();
+        //$data = Auth::guard('teacher')->user();
+        $data=Auth::guard('teacher')->user()->token()->revoke();
+        return response()->json($data);
     }
 }

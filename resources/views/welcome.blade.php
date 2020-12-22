@@ -12,6 +12,37 @@
     <div id="app">
         {{-- <main-app></main-app> --}}
     </div>
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    {{-- @if (Auth::guard('admin')->check() == true)
+        <script>
+            alert('admin')
+            window.role = 'admin'
+            console.log(window.role)
+        </script>
+    @endif --}}
+
+    <script>
+        // var admin = {!! json_encode(Auth::guard('admin')->user()); !!}
+        // var teacher = {!! json_encode(Auth::guard('teacher')->user()); !!}
+        // var user = {!! json_encode(Session::get('role')); !!}
+        // admin ? window.role = 'admin' : (teacher ? window.role = 'teacher' : window.role = 'user')
+        // console.log(admin)
+        // console.log(teacher)
+        // console.log(user)
+        // if(admin == true) {
+        //     window.role = 'admin'
+        // }else if (teacher == true) {
+        //     window.role = 'teacher'
+        // }
+        // console.log(window.role)
+        // console.log(admin)
+        //window.role = {!! json_encode(Auth::user()); !!}
+        // if(admin){
+        //     window.role = 'admin';
+        // }else {
+        //     window.role = 'user';
+        // }
+    </script>
+    <script type="text/javascript" src="{{ mix('js/app.js')}}"></script>
+
 </body>
 </html>

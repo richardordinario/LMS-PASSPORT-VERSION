@@ -1,41 +1,54 @@
 import Api from '../../api/Api'
+import authenticate from '../auth'
+import router from '../../router'
 
 const state = {
     auth: {
         login: false,
         user: [],
-        role: null
+        check: authenticate.getters['role']
     }
 }
 const getters = {
     isLoggedIn(state) {
         return state.auth.login
-    },
-    authRole(state) {
-        return state.auth.role
     }
 }
 
 const actions = {
-    async getAuth({ commit }) {
-        const response = await Api().get('/api/provider')
-        commit('AUTH_ROLE', response.data)
-    }    
+    async checkAuth({ commit }, payload) {
+        try {
+            const response = await Api().get('/api/'+payload+'/user')
+            console.log(response.data)
+        } catch (error) {
+            authenticate.commit('AUTH_ROLE', null)
+            localStorage.removeItem('token')
+            commit('LOGIN', false)
+            router.push('/login')
+        }
+    },
+    async logout({ commit }, payload) {
+        try {
+            const response = await Api().get('/api/'+payload+'/user')
+
+            console.log(Array.isArray(response.data))
+        } catch (error) {
+            authenticate.commit('AUTH_ROLE', null)
+            localStorage.removeItem('token')
+            commit('LOGIN', false)
+            router.push('/login')
+        }
+    },
 }
 
 const mutations = {
     LOGIN(state, payload) {
         state.auth.login = payload,
         state.auth.user = []
-        state.auth.role = null
     },
     AUTH_USER(state, payload) {
         state.auth.user = payload
-    },
-    AUTH_ROLE(state, payload) {
-        state.auth.role = payload
     }
-
 }
 
 export default {

@@ -40,7 +40,6 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-
         'api' => [
             'driver' => 'passport',
             'provider' => 'users',
@@ -49,7 +48,6 @@ return [
             'driver' => 'passport',
             'provider' => 'admins',
         ],
-
         'teacher' => [
             'driver' => 'passport',
             'provider' => 'teachers',
@@ -78,7 +76,7 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-        
+
         'admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,

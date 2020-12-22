@@ -36,6 +36,7 @@
 
 <script>
 import User from '../../../api/User'
+import authenticate from '../../../store/auth'
 
 export default {
     data() {
@@ -43,9 +44,9 @@ export default {
             form: {
                 email: '',
                 password: '',
-                provider: 'admins'
+                provider: 'users'
             },
-            errors: []
+            errors: [],
         }
     },
     methods: {
@@ -53,9 +54,9 @@ export default {
             return new Promise((resolve, reject) => {
                 User.login(this.form).then(res => {
                     this.$store.commit('user/LOGIN', true)
-                    this.$store.commit('user/AUTH_ROLE', this.form.provider.slice(0, -1))
+                    authenticate.commit('AUTH_ROLE', this.form.provider.slice(0, -1))
                     localStorage.setItem('token', res.data.access_token)
-                    this.$router.push('/admin/home')
+                    this.$router.push('/home')
                     resolve(res)
                     console.log(res.data)
                 }).catch(errors => {
@@ -63,15 +64,6 @@ export default {
                     reject(errors)
                 })
             })
-            // User.login(this.form).then(res => {
-            //     this.$store.commit('user/LOGIN', true)
-            //     this.$store.commit('user/AUTH_ROLE', this.form.provider.slice(0, -1))
-            //     localStorage.setItem('token', res.data.access_token)
-            //     this.$router.push('/admin/home')
-            //     console.log(res.data)
-            // }).catch(errors => {
-            //      this.errors = errors.response.data.errors
-            // })
         }
     }
 }

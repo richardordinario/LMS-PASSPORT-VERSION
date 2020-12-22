@@ -8,10 +8,10 @@ export default {
         return Api().post('/api/login',form)
     },
     logout() {
-        return Api().post('/api/logout')
+        return Api().get('/api/logout')
     },
     auth() {
-        return Api().get('/api/user')
+        return Api().get('/api/user/user')
     },
     provider() {
         return Api().get('/api/provider')

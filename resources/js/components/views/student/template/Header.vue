@@ -17,6 +17,7 @@
 
 <script>
     import User from '../../../../api/User'
+    import authenticate from '../../../../store/auth'
 
     export default {
         methods: {
@@ -24,6 +25,7 @@
                 User.logout().then(res => {
                     localStorage.removeItem('token')
                     this.$store.commit('user/LOGIN', false)
+                    authenticate.commit('AUTH_ROLE', null)
                     this.$router.push('/login')
                 })
             }

@@ -1,7 +1,8 @@
 <template>
     <div id="app">
         <LoginHeader v-if="!isLoggedIn"/>
-        <StudentHeader v-if="isLoggedIn && authRole == 'user' "/>
+        <!-- <StudentHeader v-if="$gate.isUser()"/> -->
+        <StudentHeader v-if="isLoggedIn"/>
         <router-view></router-view>
     </div>
 </template>
@@ -10,44 +11,34 @@
     import LoginHeader from './components/views/template/LoginHeader.vue'
     import StudentHeader from './components/views/student/template/Header.vue'
     import User from './api/User'
-    import Auth from './api/Provider'
+    import authenticate from './store/auth'
+    // import Auth from './api/Provider'
+    // import {globalStore} from './app'
     import { mapGetters } from 'vuex'
 
     export default {
+        data() {
+            return {
+                // role: this.$gate.isUser(),
+                // role:  globalStore.role
+            };
+        },
         components: {
             LoginHeader,
             StudentHeader
         },
         computed: {
             ...mapGetters('user',[
-                'isLoggedIn',
-                'authRole'
+                'isLoggedIn'
             ]),
         },
         methods: {
-            provider() {
-                if(localStorage.getItem('token')) {
-                    // Auth.provider().then(res => {
-                    //     if(res.data == 'admin') {
-                            
-                    //     }else if(res.data == 'teacher') {
-
-                    //     }else {
-                    //         this.$store.commit('user/AUTH_ROLE', res.data)
-                    //     }
-                    //     this.$store.commit('user/AUTH_ROLE', res.data)
-                    // }).catch(err => {
-                    //     console.log(err.response.data)
-                    // })
-                    User.provider().then(res=> {
-                        this.$store.commit('user/AUTH_ROLE', res.data)
-                    })
-                }
-            }
         },
         mounted() {
-            this.$store.commit('user/LOGIN', !!localStorage.getItem('token')),
-            this.provider()
+            this.$store.commit('user/LOGIN', !!localStorage.getItem('token'))
+            // this.$store.dispatch('user/checkAuth', authenticate.getters['authRole'])
+            // console.log(this.role)
+
         }
     }
 </script>
