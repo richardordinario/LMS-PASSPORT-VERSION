@@ -7,11 +7,15 @@ const state = {
         login: false,
         user: [],
         check: authenticate.getters['role']
-    }
+    },
+    loading: false,
 }
 const getters = {
     isLoggedIn(state) {
         return state.auth.login
+    },
+    isLoading(state) {
+        return state.loading
     }
 }
 
@@ -30,7 +34,6 @@ const actions = {
     async logout({ commit }, payload) {
         try {
             const response = await Api().get('/api/'+payload+'/user')
-
             console.log(Array.isArray(response.data))
         } catch (error) {
             authenticate.commit('AUTH_ROLE', null)
@@ -48,6 +51,14 @@ const mutations = {
     },
     AUTH_USER(state, payload) {
         state.auth.user = payload
+    },
+    LOADING(state, payload) {
+        state.loading = payload
+    },
+    AUTH_CHECK(state) {
+        if(state.auth.user.length > 0) {
+
+        }
     }
 }
 

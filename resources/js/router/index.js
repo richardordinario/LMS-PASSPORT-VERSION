@@ -46,20 +46,18 @@ const routes = [
         name: 'home',
         component: Home,
         meta: {user: true},
-        children:[
-            {
-                path: '/subject',
-                name: 'subject',
-                component: Subject,
-                meta: {user: true},
-            },
-            {
-                path: '/account',
-                name: 'account',
-                component: Account,
-                meta: {user: true},
-            },
-        ]
+    },
+    {
+        path: '/subject',
+        name: 'subject',
+        component: Subject,
+        meta: {user: true},
+    },
+    {
+        path: '/account',
+        name: 'account',
+        component: Account,
+        meta: {user: true},
     },
     //admin route
     {
@@ -82,40 +80,31 @@ function loggedIn() {
 import authenticate from '../store/auth'
 import store from '../store'
 
-router.beforeEach((to, from, next) => {
-    store.dispatch('user/checkAuth', authenticate.getters['authRole'])
 
+router.beforeEach((to, from, next) => {
     function roleValidation(meta) {
         if (!loggedIn()) {
-            if(meta == 'guest'){
-                next()
+            if(meta != 'guest') {
+                next({ path: '/login', query: { redirect: to.fullPath } })
             }else {
-                next({
-                    path: '/login',
-                    query: { redirect: to.fullPath }
-                })
+                next()
             }
         }else {
-            if(meta == 'guest') {
-                if(authenticate.getters['authRole'] == 'user') {
-                    next({
-                        path: '/home',
-                        query: { redirect: to.fullPath }
-                    })
-                }else if(authenticate.getters['authRole'] == 'admin') {
-                    next({
-                        path: '/admin/home',
-                        query: { redirect: to.fullPath }
-                    })
+            store.dispatch('user/checkAuth', authenticate.getters['authRole']).then(() => {
+                if(meta == 'guest') {
+                    if(authenticate.getters['authRole'] == 'user') {
+                        next({ path: '/home', query: { redirect: to.fullPath } })
+                    }else if(authenticate.getters['authRole'] == 'admin') {
+                        next({ path: '/admin/home', query: { redirect: to.fullPath } })
+                    }
                 }
-            }else if(authenticate.getters['authRole'] != meta){
-                next({
-                    path: '/login',
-                    query: { redirect: to.fullPath }
-                })
-            }else {
-                next()
-            }
+                else if(authenticate.getters['authRole'] != meta) {
+                    next({ path: '/login', query: { redirect: to.fullPath } })
+                }
+                else {
+                    next()
+                }
+            })
         }
     }
 

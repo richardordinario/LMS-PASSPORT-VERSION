@@ -33,7 +33,12 @@ class UserController extends Controller
     public function user(Request $request)
     {
         try {
-            return Auth::user();
+            $data = Auth::user();
+            $data = [
+                'role' => 'user',
+                'data' => $data,
+            ];
+            return response()->json($data, 200);
         } catch (\Throwable $th) {
             return response()->json('error','Unauthorized!', 401);
         }

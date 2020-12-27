@@ -1,15 +1,19 @@
 <template>
     <div id="app">
-        <LoginHeader v-if="!isLoggedIn"/>
-        <!-- <StudentHeader v-if="$gate.isUser()"/> -->
-        <StudentHeader v-if="isLoggedIn"/>
-        <router-view></router-view>
+        <div v-if="isLoading"
+            class="fixed inset-0 z-50 flex items-center justify-center text-white bg-black bg-opacity-50"
+            style="backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)" >
+            Loading.....
+        </div>
+        <router-view v-if="!isLoggedIn"></router-view>
+        <StudentMain v-if="isLoggedIn && role=='user' "/>
     </div>
 </template>
 
 <script>
     import LoginHeader from './components/views/template/LoginHeader.vue'
     import StudentHeader from './components/views/student/template/Header.vue'
+    import StudentMain from './components/views/student/template/Main.vue'
     import User from './api/User'
     import authenticate from './store/auth'
     // import Auth from './api/Provider'
@@ -19,26 +23,30 @@
     export default {
         data() {
             return {
-                // role: this.$gate.isUser(),
-                // role:  globalStore.role
+                sidebarOpen: false,
+                isSearchBoxOpen: false,
             };
         },
         components: {
             LoginHeader,
-            StudentHeader
+            StudentHeader,
+            StudentMain
         },
         computed: {
             ...mapGetters('user',[
-                'isLoggedIn'
+                'isLoggedIn',
+                'isLoading'
             ]),
+            role: function() {
+                return authenticate.getters['authRole']
+            }
         },
         methods: {
+
         },
         mounted() {
             this.$store.commit('user/LOGIN', !!localStorage.getItem('token'))
-            // this.$store.dispatch('user/checkAuth', authenticate.getters['authRole'])
-            // console.log(this.role)
-
+            console.log(this.role)
         }
     }
 </script>

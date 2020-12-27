@@ -1,28 +1,37 @@
 <template>
     <div>
-        Home
-        <h1>{{user.name}}</h1>
-        <h1></h1>
-        <router-link to="/subject">Subject</router-link>
-        <router-link to="/account">Account</router-link>
-        <router-view></router-view>
+        Student Home
     </div>
 </template>
 
 <script>
     import User from '../../../api/User'
+    import authenticate from '../../../store/auth'
     import { mapState } from 'vuex'
 
     export default {
+        data() {
+            return {
+                role: null,
+                isSidebarOpen: true,
+                isSearchBoxOpen: false
+            }
+        },
         computed: {
             ...mapState('user',{
                 user: state => state.auth.user
             }),
         },
+        methods: {
+            toggleSidbarMenu() {
+                this.isSidebarOpen = !this.isSidebarOpen
+            }
+        },
         mounted() {
             User.auth().then(res => {
-                this.$store.commit('user/AUTH_USER', res.data)
-            })
+                this.$store.commit('user/AUTH_USER', res.data.data)
+            }),
+             this.role = authenticate.state.role
         }
     }
 </script>

@@ -14,10 +14,8 @@
                     </button>
                      <h1 class="text-gray-800 text-xl ml-3"></h1>
                 </div>
-                <div class="flex item-center">
-                    <a href="#" @click="logout">Logout</a>
-                </div>
-                <div class="flex items-center">
+
+                <!-- <div class="flex items-center">
                     <div x-data="{ dropdownOpen: false }" class="relative">
                         <button @click="btnDropdownOpen"
                             class="relative block h-8 w-8 rounded-full overflow-hidden shadow focus:outline-none">
@@ -26,8 +24,7 @@
                                 alt="Your avatar">
                         </button>
 
-                        <div x-show="dropdownOpen" @click="btnDropdownOpen" class="fixed inset-0 h-full w-full z-10"
-                            style="display: none;"></div>
+                        <div x-show="dropdownOpen" @click="btnDropdownOpen" class="fixed inset-0 h-full w-full z-10"></div>
 
                         <div x-show="dropdownOpen"
                             class="absolute right-0 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10"
@@ -40,6 +37,9 @@
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white">Logout</a>
                         </div>
                     </div>
+                </div> -->
+                 <div class="flex item-center">
+                    <a href="#" @click="logout">Logout</a>
                 </div>
             </header>
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
@@ -59,9 +59,14 @@
     import { mapState } from 'vuex'
 
     export default {
+        name: 'Main',
+        components: {
+            Sidebar,
+        },
         data() {
             return {
-                dropdownOpen: false,
+                sidebarOpen: false,
+                dropdownOpen: true,
             }
         },
         computed: {
@@ -99,7 +104,12 @@
 
                 })
             },
+            showSidebar() {
+                this.sidebarOpen = !this.sidebarOpen
+                console.log(this.sidebarOpen)
+            },
             btnDropdownOpen() {
+                alert('asdadsa')
                 this.dropdownOpen = !this.dropdownOpen
             }
         }

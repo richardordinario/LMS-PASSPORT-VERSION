@@ -1,11 +1,12 @@
 <template>
-    <div v-if="role=='admin'">
+    <div v-if="user">
         Admin Home
     </div>
 </template>
 
 <script>
     import authenticate from '../../../store/auth'
+    import { mapState } from 'vuex'
 
     export default {
         data() {
@@ -14,7 +15,9 @@
             }
         },
         computed: {
-
+            ...mapState('user',{
+                user: state => state.auth.user
+            }),
         },
         mounted() {
             this.role = authenticate.state.role
